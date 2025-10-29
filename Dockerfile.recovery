@@ -1,0 +1,29 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python, git and MySQL client
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    git \
+    mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone and setup pyinnodb
+RUN git clone https://github.com/WinChua/pyinnodb.git /opt/pyinnodb
+
+# Install pyinnodb dependencies
+RUN pip3 install --no-cache-dir \
+    crcmod \
+    construct==2.10.68 \
+    construct-typing \
+    click \
+    importlib-metadata
+
+# Install pyinnodb package
+RUN cd /opt/pyinnodb && pip3 install --no-cache-dir -e .
+
+WORKDIR /recovery
+
+CMD ["/bin/bash"]

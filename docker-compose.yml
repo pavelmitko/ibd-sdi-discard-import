@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql84
+    restart: unless-stopped
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - recovery_network
+
+  recovery:
+    build:
+      context: .
+      dockerfile: Dockerfile.recovery
+    container_name: recovery_tools
+    volumes:
+      - ~/all_databases_backup:/backup:ro
+      - ~/web/ibd-sdi-discard-import:/scripts
+      - mysql_data:/mysql_data
+    networks:
+      - recovery_network
+    depends_on:
+      - mysql
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  recovery_network:
+    driver: bridge
