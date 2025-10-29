@@ -1,1 +1,1 @@
-# ibd-sdi-discard-import
+# RUN: docker exec recovery_tools bash -c "/scripts/restore_database.sh /path/to/ibd/files db_name && /scripts/fix_failed_imports.sh db_name
